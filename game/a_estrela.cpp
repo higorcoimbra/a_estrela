@@ -37,7 +37,7 @@ struct estado {
 	vector<int> tab;
 	int pos;
 	bool operator < (const estado &outro) const {
-		return pos <= outro.pos;
+		return tab < outro.tab;
 	}
 };
 
@@ -85,6 +85,8 @@ void cria_estado(estado atual, estado novo){
 		conta_estados++;
 		g[tab_id[atual]].push_back(aresta(tab_id[novo], 1));
 		g[tab_id[novo]].push_back(aresta(tab_id[atual], 1));
+		//puts("Novo fiho: ");
+		//printEstado(novo);
 	}
 }
 
@@ -97,11 +99,10 @@ bool pode(int i, int j) {
 */
 void modelagem() {
 	for (int i = 0; i < id_tab.size(); i++) {
-		cout << i << endl;
 		estado atual = id_tab[i];
 		int pos = atual.pos;
 		int ii = pos/3, jj = pos%3;		
-		//printf("Estado pai: \n");
+		//printf("*********************************************** Estado pai: ******************************************* \n");
 		//printEstado(atual);	
 		for (int j = 0; j < 4; j++) {
 			if (pode(mov_y[j] + ii, mov_x[j] + jj)) {
@@ -111,20 +112,16 @@ void modelagem() {
 				swap(novo.tab[pos], novo.tab[npos]);
 				novo.pos = npos;
 				cria_estado(atual, novo);
-				//puts("Estado fiho: ");
-				//printEstado(novo);
 			}
 		}
 	}
-
-	printf("Gerou\n");
 }
 
 
 /*
 	Funçao responsavel por percorrer o grafo e encontrar qual o caminho mínimo entre uma origem e um destino
 */
-/*int busca(vector<aresta> grafo[], int origem, int destino) {
+int busca(int origem, int destino) {
 	priority_queue<aresta> pq;					                    // Armazena as bordas
 	fill(distancia.begin(),distancia.end(),INT_MAX);        // Inicializa as distancias para todos os nos como infinito
 	fill(pais.begin(),pais.end(),-1);                       // Inicializa o pai de todos os nós com -1
@@ -138,10 +135,10 @@ void modelagem() {
 		int u = pai.indice;
 		if(u == destino) return distancia[u];                 // Se o no restirado é o destino, a busca para, e retorna-se a distancia ate o destino
 
-		for(int i = 0;i < grafo[u].size();i++) {
-			int v = grafo[u][i].indice;			
-			if(distancia[v] > distancia[u]+grafo[u][i].peso) {  // Verifica se a distancia atual para esse no e maior do que a nova distancia ate ele, passando pelo no u
-				distancia[v] = distancia[u]+grafo[u][i].peso;     // Atualiza a distancia para esse no 
+		for(int i = 0;i < g[u].size();i++) {
+			int v = g[u][i].indice;			
+			if(distancia[v] > distancia[u]+g[u][i].peso) {  // Verifica se a distancia atual para esse no e maior do que a nova distancia ate ele, passando pelo no u
+				distancia[v] = distancia[u]+g[u][i].peso;     // Atualiza a distancia para esse no 
 				pais[v] = u;                                      // Atualiza o pai desse no
 				pq.push(aresta(v,distancia[v]+linha_reta[v]));    // Coloca o no na fila, com f = g + h
 			}
@@ -149,7 +146,7 @@ void modelagem() {
 	}
 
 	return INT_MAX;
-}*/
+}
 
 /*
   Procedimento responsável por imprimir qual o caminho minimo percorrido pela busca
@@ -187,6 +184,13 @@ int main() {
 	id_tab.insert(make_pair(conta_estados, origem));
 	conta_estados++;
 	modelagem();
+
+	linha_reta.resize(conta_estados);
+	pais.resize(conta_estados);
+	distancia.resize(conta_estados);
+	fill(linha_reta.begin(), linha_reta.end(), 0);
+
+	printf("%d\n", busca(tab_id[origem], tab_id[destino]));
 
 	return 0;
 }
