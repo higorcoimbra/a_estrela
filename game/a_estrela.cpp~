@@ -56,15 +56,15 @@ const int size = 3;
 /*
 	Procedimento para Debug do Grafo
 */
-/*
-void print_model(vector<aresta> modelo[]) {
-	for(int i = 0;i < n_cidades;i++){
-		cout << id_tab[i] << "->";
-		for(int j = 0;j < modelo[i].size();j++){
-			cout << id_tab[modelo[i][j].indice] << "-" << modelo[i][j].peso << " ";
+
+void print_model() {
+	for(int i = 0;i < 5;i++){
+		cout << i << "->";
+		for(int j = 0;j < g[i].size();j++){
+			cout << g[i][j].indice << "-" << g[i][j].peso << " ";
 		}cout << endl;
 	}cout << endl;
-}*/
+}
 
 void printEstado(estado E) {
 	puts("");
@@ -85,7 +85,7 @@ void cria_estado(estado atual, estado novo){
 		conta_estados++;
 		g[tab_id[atual]].push_back(aresta(tab_id[novo], 1));
 		g[tab_id[novo]].push_back(aresta(tab_id[atual], 1));
-		//puts("Novo fiho: ");
+		//puts("Filin");
 		//printEstado(novo);
 	}
 }
@@ -101,9 +101,8 @@ void modelagem() {
 	for (int i = 0; i < id_tab.size(); i++) {
 		estado atual = id_tab[i];
 		int pos = atual.pos;
+		//printEstado(atual);
 		int ii = pos/3, jj = pos%3;		
-		//printf("*********************************************** Estado pai: ******************************************* \n");
-		//printEstado(atual);	
 		for (int j = 0; j < 4; j++) {
 			if (pode(mov_y[j] + ii, mov_x[j] + jj)) {
 				estado novo = atual;
@@ -114,6 +113,7 @@ void modelagem() {
 				cria_estado(atual, novo);
 			}
 		}
+		sleep(5);
 	}
 }
 
@@ -138,7 +138,7 @@ int busca(int origem, int destino) {
 		for(int i = 0;i < g[u].size();i++) {
 			int v = g[u][i].indice;			
 			if(distancia[v] > distancia[u]+g[u][i].peso) {  // Verifica se a distancia atual para esse no e maior do que a nova distancia ate ele, passando pelo no u
-				distancia[v] = distancia[u]+g[u][i].peso;     // Atualiza a distancia para esse no 
+				distancia[v] = distancia[u]+g[u][i].peso;     					// Atualiza a distancia para esse no 
 				pais[v] = u;                                      // Atualiza o pai desse no
 				pq.push(aresta(v,distancia[v]+linha_reta[v]));    // Coloca o no na fila, com f = g + h
 			}
@@ -179,7 +179,7 @@ int main() {
 		destino.tab[i] = i;
 	}
 	
-	origem.pos = 4;
+	origem.pos = 1;
 	tab_id.insert(make_pair(origem, conta_estados));
 	id_tab.insert(make_pair(conta_estados, origem));
 	conta_estados++;
@@ -189,6 +189,13 @@ int main() {
 	pais.resize(conta_estados);
 	distancia.resize(conta_estados);
 	fill(linha_reta.begin(), linha_reta.end(), 0);
+
+	cout << tab_id[origem] << ' ' << tab_id[destino] << endl;
+
+	printEstado(origem);
+	printEstado(destino);
+
+	print_model();
 
 	printf("%d\n", busca(tab_id[origem], tab_id[destino]));
 
