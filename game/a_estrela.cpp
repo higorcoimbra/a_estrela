@@ -90,6 +90,9 @@ void cria_estado(estado atual, estado novo){
 	}
 }
 
+/*
+	Funcao que verifica se um movimento e possivel
+*/
 bool pode(int i, int j) {
 	return i >= 0 && i < size && j >= 0 && j < size;
 }
@@ -101,7 +104,6 @@ void modelagem() {
 	for (int i = 0; i < id_tab.size(); i++) {
 		estado atual = id_tab[i];
 		int pos = atual.pos;
-		//printEstado(atual);
 		int ii = pos/3, jj = pos%3;		
 		for (int j = 0; j < 4; j++) {
 			if (pode(mov_y[j] + ii, mov_x[j] + jj)) {
@@ -113,7 +115,6 @@ void modelagem() {
 				cria_estado(atual, novo);
 			}
 		}
-		sleep(5);
 	}
 }
 
@@ -176,10 +177,10 @@ int main() {
 
 	for (int i = 0; i < destino.tab.size(); i++) {
 		cin >> origem.tab[i];
+		if (!origem.tab[i]) origem.pos = i;
 		destino.tab[i] = i;
 	}
 	
-	origem.pos = 1;
 	tab_id.insert(make_pair(origem, conta_estados));
 	id_tab.insert(make_pair(conta_estados, origem));
 	conta_estados++;
